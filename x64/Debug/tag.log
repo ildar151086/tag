@@ -1,0 +1,3 @@
+﻿  Source.cpp
+D:\CALC_VIEW\PSEVDOKOD\с++\tag\tag\Source.cpp(265,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  tag.vcxproj -> D:\CALC_VIEW\PSEVDOKOD\с++\tag\x64\Debug\tag.exe
