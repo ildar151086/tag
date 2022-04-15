@@ -8,6 +8,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <stdlib.h>
 
 
 
@@ -424,6 +425,7 @@ void prossesGameForHuman(int **tags, int sizeMode, Statistic &statictic) {
     int indexIZero = -1;
     int indexJZero = -1;
 
+
     cout << "...................Игра начинаеться......................" << endl;
     cout << "Вы должны будите ввести цифру с которую необходимо поменять местами с пустым поле" << endl;
 
@@ -463,6 +465,8 @@ void prossesGameForHuman(int **tags, int sizeMode, Statistic &statictic) {
         swap(tags, indexI, indexJ, indexIZero, indexJZero);
 
         statictic.count++;
+
+        // Проверка победной комбинации
     }
 
     // заканчиваем отчет
@@ -470,6 +474,68 @@ void prossesGameForHuman(int **tags, int sizeMode, Statistic &statictic) {
 
 }
 
+void prossesGameForCompiuter(int** tags, int sizeMode, Statistic& statictic) {
+    // Будет следить была ли выиграшная комбинация или нет для остановки игры
+    bool gameEnd = false;
+
+    // Число введенные компьютером которые необходимо поменять с пустой ячейкой
+    int valueNumder = -1;
+
+    // Индексы расположения числа в массиве который ввел ПК
+    int indexJ = -1;
+    int indexI = -1;
+
+    // Индексы где будем хранить позицию пустой ячейки
+    int indexIZero = -1;
+    int indexJZero = -1;
+
+
+    cout << "...................Игра начинаеться......................" << endl;
+    cout << "Вы должны будите ввести цифру с которую необходимо поменять местами с пустым поле" << endl;
+
+    // Начинаем отчет
+    statictic.timeStart = time(0);
+
+    // Запускаем цикл пока не бдет правильного решения или не введите цифру "-1"
+    while (!gameEnd) {
+        // Визуализация поля игры Пятнашки
+        showTagsElements(tags, sizeMode);
+
+        // Запрос хода
+        cout << "Ваш ход:\t";
+        cin >> valueNumder;
+
+        // Проверяем не букву ли ввел пользователь -1 для выхода из программы
+        if (valueNumder == -1) {
+            gameEnd = true;
+            cout << "Выход из программы" << endl;
+            break;
+        }
+
+        // Проверяем если такое число вообще на поле
+        if (!checkElements(sizeMode, tags, valueNumder, indexI, indexJ)) {
+            cout << "Такого числа нет на доске " << endl;
+            cout << "Введите новое число" << endl;
+            continue;
+        }
+
+        if (!chekZero(tags, indexI, indexJ, sizeMode, indexIZero, indexJZero)) {
+            cout << "Пустая ячейка не находиться на соседних полях " << endl;
+            cout << "Введите новое число" << endl;
+            continue;
+        }
+
+        // Меняем местами пустую ячейку и заданное число
+        swap(tags, indexI, indexJ, indexIZero, indexJZero);
+
+        statictic.count++;
+
+        // Проверка победной комбинации
+    }
+
+    // заканчиваем отчет
+    statictic.timeEnd = time(0);
+}
 
 /// <summary>
 /// Показ стат. данных
@@ -505,22 +571,26 @@ int main() {
     int gameStart = -1;
     inputGameUse(gameStart);
 
-    // Удаление одного из элементов в двумерном массиве случаном образом для создание пустой ячейки
+    // Удаление минимального значения из элементов в двумерном массиве для создание пустой ячейки
     nullTags(tags, sizeMode);
 
     // Визуализация двумерного массива
     showTagsElements(tags, sizeMode);
+    
+    // Очистка консоли перед игрой
+    system("cls");
 
     // Реализация логики игры 1) при Ручном 2) компьютерном подходе
     switch (gameStart) {
         case COMPUTER:
+            prossesGameForCompiuter(tags, sizeMode, statictic);
         break;
         case HUMAN:
             prossesGameForHuman(tags, sizeMode, statictic);
         break;
     }
 
-    // Вывод статичтики
+    // Вывод статиcтики
     showStatistic(statictic);
 
     // Освобождаем выделенную память под динамический массив
